@@ -1,10 +1,22 @@
 {
-  "register_user": {
-    "email": "eve.holt@reqres.in",
-    "password": "pistol"
-  },
-  "login_user": {
-    "email": "eve.holt@reqres.in",
-    "password": "cityslicka"
-  }
+    "register_user": {
+        "email": "eve.holt@reqres.in",
+        "password": "pistol"
+    },
+    "login_user": {
+        "email": "eve.holt@reqres.in",
+        "password": "cityslicka"
+    },
+    "create_user": {
+        "name": "John Doe",
+        "job": "Developer"
+    },
+    "update_user": {
+        "name": "Jane Doe",
+        "job": "QA Engineer"
+    },
+    "patch_data": {
+    "name": "morpheus",
+    "job": "zion resident"
+}
 }
