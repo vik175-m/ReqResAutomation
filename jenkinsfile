@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        EMAIL_RECIPIENTS = 'vik.mishra175@gmail.com'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out the code...'
+                git branch: 'main', url: 'https://github.com/vik175-m/ReqResAutomation.git'
+            }
+        }
+
+        stage('Set Up Environment') {
+            steps {
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                    source venv/bin/activate
+                    pytest --junitxml=report.xml --html=report.html --self-contained-html
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            emailext subject: "Jenkins Build Success: ${JOB_NAME} #${BUILD_NUMBER}",
+                     body: "The Jenkins build for ${JOB_NAME} succeeded.\n\nCheck details: ${BUILD_URL}",
+                     to: "${EMAIL_RECIPIENTS}"
+        }
+        failure {
+            emailext subject: "Jenkins Build Failed: ${JOB_NAME} #${BUILD_NUMBER}",
+                     body: "The Jenkins build for ${JOB_NAME} failed.\n\nCheck details: ${BUILD_URL}",
+                     to: "${EMAIL_RECIPIENTS}"
+        }
+    }
+}
