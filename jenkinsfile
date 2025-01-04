@@ -1,34 +1,38 @@
 pipeline {
     agent any
-
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out the code...'
-                git branch: 'main', url: 'https://github.com/vik175-m/ReqResAutomation.git'
+                git 'https://github.com/vik175-m/ReqResAutomation.git'
             }
         }
-
-        stage('Run Tests') {
+        stage('Set Up Environment') {
             steps {
                 sh '''
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
-                    pip list  # Check installed packages
+                '''
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh '''
+                    source venv/bin/activate
                     pytest --junitxml=report.xml --html=report.html --self-contained-html
                 '''
             }
         }
     }
-
     post {
-        success {
-            echo 'Build succeeded!'
-        }
-        failure {
-            echo 'Build failed. No rollback performed due to missing server configuration.'
+        always {
+            archiveArtifacts artifacts: 'report.xml'
+            publishHTML(target: [
+                reportName: 'Test Report',
+                reportDir: '.',
+                reportFiles: 'report.html'
+            ])
         }
     }
 }
