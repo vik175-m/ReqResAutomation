@@ -15,7 +15,7 @@ pipeline {
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install --upgrade pip
-                    pip install pytest pytest-html
+                    pip install -r requirements.txt
                     pip list  # Check installed packages
                     pytest --junitxml=report.xml --html=report.html --self-contained-html
                 '''
